@@ -7,149 +7,110 @@ const { NotImplementedError } = require('../extensions/index.js');
 * using Node from extensions
 */
 class BinarySearchTree {
+  // constructor() {
+  //   this.node = null
+  // }
 
-	constructor () {
-		this.rootTree = null;
-	}
+  root() {
+    return this.node || null;
+  }
 
-	root() {
-		return this.rootTree;
-		// remove line with error and write your code here
-	}
+  add(data) {
+    const node = new Node(data)
+    if ( !this.node) {
+      this.node = node
+    } else {
+      let current = this.node
 
-	add(data) {
-		this.rootTree = addElement(this.rootTree, data);
+      while (current) {
+        if(node.data < current.data) {
+          if(!current.left) {
+            current.left = node
+            break
+          }
+          current = current.left
+        } else {
+          if (!current.right) {
+            current.right = node
+            break
+          }
+          current = current.right
+        }
+      }
+    }
+  }
 
-		function addElement(node, data) {
-			if (node === null) {
-				return new Node(data);
-			}
+  has(data ) {
+    return !!this.find(data);
+  }
 
-			if (node.data === data) {
-				return node;
-			}
+  find(data) {
+    let current = this.node;
+    while(current) {
+      if (data < current.data) {
+        current = current.left;
+      } else if (data > current.data) {
+        current = current.right;
+      } else {
+        return current;
+      }
+    }
+    return null;
+  }
 
-			if (data < node.data) {
-				node.left = addElement(node.left, data);
-			} else {
-				node.right = addElement(node.right, data);
-			}
-			return node;
-		}
-		// remove line with error and write your code here
-	}
+  remove(data, node = this.node) {
+    if (!this.has(data)) return;
+    if (!node){
+      return null
+    }
 
-	has(data) {
-		return hasElement(this.rootTree, data);
+    if (data < node.data) {
+      node.left = this.remove(data, node.left)
+    } else if (data > node.data) {
+      node.right = this.remove(data, node.right)
+    } else {
+      if (!node.left) {
+        return node.right
+      } else if (!node.right) {
+        return  node.left
+      } else {
+        node.data = this.min(node.right)
+        node.right = this.remove(node.data, node.right)
+      }
+    }
+    
+    return node
+  }
 
-		function hasElement(node, data) {
-			if (node === null) {
-				return false;
-			}
+  min(node = this.node) {
+    let min =node.data || null
+    let current = node
 
-			if (node.data === data) {
-				return true;
-			}
+    while (current) {
+      if (!min || current.data < min) {
+        min = current.data
+      }
+      current = current.left
+    }
 
-			if (data < node.data) {
-				return hasElement(node.left, data);
-			} else {
-				return hasElement(node.right, data);
-			}
-		}
-		// remove line with error and write your code here
-	}
+    return min
+  }
 
-	find(data) {
-		return findElement(this.rootTree, data);
+  max(node = this.node) {
+    let max = node.data || null;
+    let current = node;
 
-		function findElement(node, data) {
-			if (node === null) {
-				return null;
-			}
+    while(current) {
+      if (!max || current.data > max) {
+        max = current.data;
+      }
+      current = current.right;
+    }
 
-			if (node.data === data) {
-				return node;
-			}
-
-			if (data < node.data) {
-				return findElement(node.left, data);
-			} else {
-				return findElement(node.right, data);
-			}
-		}
-		// remove line with error and write your code here
-	}
-
-	remove(data) {
-		this.rootTree = removeElement(this.rootTree, data);
-
-		function removeElement(node, data) {
-			if (node === null) {
-				return null;
-			}
-
-			if (data < node.data) {
-				node.left = removeElement(node.left, data);
-				return node;
-			} else if (data > node.data) {
-				node.right = removeElement(node.right, data);
-				return node;
-			} else {
-				if (node.left === null && node.right === null) {
-					return null;
-				}
-				if (node.left === null) {
-					node = node.right;
-					return node;
-				}
-				if (node.right === null) {
-					node = node.left;
-					return node;
-				}
-				let minRight = node.right;
-				while (minRight.left !== null) {
-					minRight = minRight.left;
-				}
-				node.data = minRight.data;
-				node.right = removeElement(node.right, minRight.data);
-				return node;
-			}
-		}
-		// remove line with error and write your code here
-	}
-
-	min() {
-		return minElement(this.rootTree, null);
-
-		function minElement(node) {
-			if (node === null) {
-				return null;
-			}
-			if (node.left === null) {
-				return node.data;
-			}
-			return minElement(node.left);
-		}
-
-	}
-
-	max() {
-		return maxElement(this.rootTree, null);
-
-		function maxElement(node) {
-			if (node === null) {
-				return null;
-			}
-			if (node.right === null) {
-				return node.data;
-			}
-			return maxElement(node.right);
-		}
-
-	}
+    return max;
+  }
+  
 }
-
 
 module.exports = {
 	BinarySearchTree
